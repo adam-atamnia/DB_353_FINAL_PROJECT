@@ -87,6 +87,7 @@ begin
 	end if;
     
     if isInsertValid = false then
+		#set message = concat('ID: ', new.id, ' - ', message);
 		signal sqlstate '45000' set message_text = message;
 	end if;
 

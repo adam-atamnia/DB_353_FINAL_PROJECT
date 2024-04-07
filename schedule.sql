@@ -1,6 +1,6 @@
 #GRANT ALTER ON hkc353_4.Schedule TO 'hkc353_4'@'172.31.163.202';
-drop table Schedule;
-CREATE TABLE Schedule (
+drop table if exists Schedule;
+CREATE TABLE if not exists Schedule (
     pid INT,
     fid INT,
     date DATE,
