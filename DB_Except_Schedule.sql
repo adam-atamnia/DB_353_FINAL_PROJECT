@@ -13,206 +13,6 @@ CREATE TABLE Persons (
     occupation VARCHAR(255)
 );
 
-CREATE TABLE Residences (
-    rid INT PRIMARY KEY,
-    address VARCHAR(255),
-    type ENUM('apartment', 'condominium', 'semidetached house', 'house'),
-    telephone VARCHAR(15),
-	city VARCHAR(50),	
-    province VARCHAR(50),
-    postalCode VARCHAR(10),
-    bedroom INT
-);
-
-CREATE TABLE PrimaryLiving (
-    rid INT,
-    pid INT,
-    FOREIGN KEY (rid) REFERENCES Residences(rid),
-    FOREIGN KEY (pid) REFERENCES Persons(pid),
-    PRIMARY KEY (rid, pid)
-);
-
-CREATE TABLE SecondaryLiving (
-    rid INT,
-    pid INT,
-    FOREIGN KEY (rid) REFERENCES Residences(rid),
-    FOREIGN KEY (pid) REFERENCES Persons(pid),
-    PRIMARY KEY (rid, pid)
-);
-
-CREATE TABLE Relationship (
-    pid1 INT,
-    pid2 INT,
-    type ENUM('roommate', 'partner', 'parent', 'dependent'),
-    FOREIGN KEY (pid1) REFERENCES Persons(pid),
-    FOREIGN KEY (pid2) REFERENCES Persons(pid),
-    PRIMARY KEY (pid1, pid2)
-);
-
-CREATE TABLE Facilities (
-    fid INT PRIMARY KEY,
-    name VARCHAR(255),
-    address VARCHAR(255),
-    city VARCHAR(50),
-    province VARCHAR(50),
-    postalCode CHAR(10),
-    telephone VARCHAR(15),
-    webAddress VARCHAR(255),
-    type ENUM('hospital', 'CLSC', 'clinic', 'pharmacy', 'special installment'),
-    capacity INT,
-    managerID INT,
-    FOREIGN KEY (managerID) REFERENCES Persons(pid),
-);
-
-CREATE TABLE Employees (
-    fid INT,
-    pid INT,
-    role ENUM('nurse', 'doctor', 'cashier', 'pharmacist', 'receptionist', 'administrative personnel', 'security personnel', 'regular employee'),
-    startDate DATE,
-    endDate DATE,
-    FOREIGN KEY (fid) REFERENCES Facilities(fid),
-    FOREIGN KEY (pid) REFERENCES Persons(pid),
-    PRIMARY KEY (fid, pid, startDate)
-);
-
-CREATE TABLE Vaccines (
-    pid INT,
-    fid INT,
-    date DATE,
-    type ENUM('Pfizer', 'Moderna', 'AstraZeneca', 'Johnson & Johnson'),
-    FOREIGN KEY (pid) REFERENCES Persons(pid),
-    FOREIGN KEY (fid) REFERENCES Facilities(fid),
-    PRIMARY KEY (pid, fid, date)
-);
-
-CREATE TABLE Infections (
-    pid INT,
-    date DATE,
-    type ENUM('COVID-19', 'SARS-Cov-2 Variant', 'other types'),
-    FOREIGN KEY (pid) REFERENCES Persons(pid),
-    PRIMARY KEY (pid, date)
-);
-
-INSERT INTO Facilities VALUES
-(1, 'Montreal General Hospital', '1650 Cedar Ave', 'Montreal', 'QC', 'H3G 1A4', '514-934-1934', 'http://montrealgeneralhospital.ca', 'Hospital', 500),
-(2, 'CLSC Cote-des-Neiges', '5700 Côte-des-Neiges Rd', 'Montreal', 'QC', 'H3T 2A8', '514-731-8531', 'http://clsc-cotedesneiges.ca', 'CLSC', 150),
-(3, 'Downtown Montreal Clinic', '1550 De Maisonneuve Blvd', 'Montreal', 'QC', 'H3G 1N2', '514-933-8383', 'http://downtownmontrealclinic.ca', 'clinic', 100),
-(4, 'Pharmaprix', '1120 Ste-Catherine St W', 'Montreal', 'QC', 'H3B 1H4', '514-866-3133', 'http://pharmaprix.ca', 'pharmacy', 50),
-(5, 'Special Installment for Research', '3450 University St', 'Montreal', 'QC', 'H3A 0E8', '514-398-6644', 'http://researchinstallment.ca', 'special installment', 200),
-(6, 'Hospital Maisonneuve Rosemont', '5415 de l\'Assomption Blvd', 'Montreal', 'QC', 'H1T 2M4', '514-252-3400', 'http://maisonneuverosemonthospital.ca', 'Hospital', 350),
-(7, 'CLSC Montréal South', '6901 Boulevard Decarie', 'Montreal', 'QC', 'H3W 3E4', '514-484-7878', 'http://clscmontrealsouth.ca', 'CLSC', 130),
-(8, 'Old Port Pharmacy', '97 de la Commune St E', 'Montreal', 'QC', 'H2Y 1J1', '514-861-2121', 'http://oldportpharmacy.ca', 'pharmacy', 45),
-(9, 'Mount Royal Clinic', '1260 Remembrance Rd', 'Montreal', 'QC', 'H3H 1A2', '514-849-1234', 'http://mountroyalclinic.ca', 'clinic', 75),
-(10, 'Special Therapy Unit', '1030 Mackay St', 'Montreal', 'QC', 'H3G 2H1', '514-933-4441', 'http://specialtherapyunit.ca', 'special installment', 90),
-(11, 'Vancouver General Hospital', '899 W 12th Ave', 'Vancouver', 'BC', 'V5Z 1M9', '604-875-4111', 'http://vancouvergeneralhospital.ca', 'Hospital', 1000),
-(12, 'Calgary Clinic', '1403 29 St NW', 'Calgary', 'AB', 'T2N 2T9', '403-944-1110', 'http://calgaryclinic.ca', 'clinic', 200),
-(13, 'Royal Alexandra Hospital', '10240 Kingsway NW', 'Edmonton', 'AB', 'T5H 3V9', '780-735-4111', 'http://royalalex.org', 'Hospital', 850),
-(14, 'Saskatoon City Hospital', '701 Queen St', 'Saskatoon', 'SK', 'S7K 0M7', '306-655-8000', 'http://saskatooncityhospital.ca', 'Hospital', 450),
-(15, 'Winnipeg Health Sciences Centre', '820 Sherbrook St', 'Winnipeg', 'MB', 'R3A 1R9', '204-787-3661', 'http://winnipeghealthsciencescentre.ca', 'Hospital', 700);
-
-
-INSERT INTO Residences VALUES
-(1, '1234 Mountain St', 'apartment', '514-123-4567', 'Montreal', 'QC', 'H3H 1Z1', 3),
-(2, '5678 Forest Ave', 'house', '514-234-5678', 'Montreal', 'QC', 'H4H 2X2', 4),
-(3, '91011 River Rd', 'condominium', '514-345-6789', 'Montreal', 'QC', 'H5H 3Y3', 2),
-(4, '1213 Valley Dr', 'semidetached house', '514-456-7890', 'Montreal', 'QC', 'H6H 4W4', 3),
-(5, '1415 Sunset Blvd', 'apartment', '514-567-8901', 'Montreal', 'QC', 'H7H 5V5', 2),
-(6, '1617 Lakeview St', 'house', '514-678-9012', 'Montreal', 'QC', 'H8H 6U6', 5),
-(7, '1819 Maple Ave', 'apartment', '514-789-0123', 'Montreal', 'QC', 'H9H 7T7', 1),
-(8, '2021 Oak St', 'house', '514-890-1234', 'Montreal', 'QC', 'H1H 8R8', 4),
-(9, '2223 Pine Rd', 'semidetached house', '514-901-2345', 'Montreal', 'QC', 'H2H 9Q9', 3),
-(10, '2425 Birch Blvd', 'apartment', '514-012-3456', 'Montreal', 'QC', 'H3H 0P0', 2),
-(11, '2627 Cedar St', 'house', '514-123-4567', 'Montreal', 'QC', 'H4H 1Z1', 5),
-(12, '2829 Elm Ave', 'condominium', '514-234-5678', 'Montreal', 'QC', 'H5H 2X2', 2),
-(13, '3031 Fir Rd', 'semidetached house', '514-345-6789', 'Montreal', 'QC', 'H6H 3Y3', 3),
-(14, '3233 Grove Dr', 'apartment', '514-456-7890', 'Montreal', 'QC', 'H7H 4W4', 2),
-(15, '3435 Hillside Blvd', 'house', '514-567-8901', 'Montreal', 'QC', 'H8H 5V5', 4),
-(16, '3637 Ivy St', 'apartment', '514-678-9012', 'Montreal', 'QC', 'H9H 6U6', 1),
-(17, '3839 Juniper Ave', 'house', '514-789-0123', 'Montreal', 'QC', 'H1H 7T7', 5),
-(18, '4041 King Rd', 'semidetached house', '514-890-1234', 'Montreal', 'QC', 'H2H 8R8', 3),
-(19, '4243 Linden Blvd', 'apartment', '514-901-2345', 'Montreal', 'QC', 'H3H 9Q9', 2),
-(20, '4445 Maplewood St', 'house', '514-012-3456', 'Montreal', 'QC', 'H4H 0P0', 4),
-(21, '4647 Oakwood Ave', 'condominium', '416-123-4567', 'Toronto', 'ON', 'M1M 1A1', 2),
-(22, '4849 Pinehurst Dr', 'house', '416-234-5678', 'Toronto', 'ON', 'M2M 2B2', 4),
-(23, '5051 Queen St', 'apartment', '416-345-6789', 'Toronto', 'ON', 'M3M 3C3', 1),
-(24, '5253 Richmond Ave', 'semidetached house', '416-456-7890', 'Toronto', 'ON', 'M4M 4D4', 3),
-(25, '5455 Somerset Rd', 'house', '416-567-8901', 'Toronto', 'ON', 'M5M 5E5', 5),
-(26, '5657 Taylor St', 'apartment', '416-678-9012', 'Toronto', 'ON', 'M6M 6F6', 2),
-(27, '5859 Union Blvd', 'house', '416-789-0123', 'Toronto', 'ON', 'M7M 7G7', 4),
-(28, '6061 Victoria Ave', 'condominium', '416-890-1234', 'Toronto', 'ON', 'M8M 8H8', 2),
-(29, '6263 Wellington Dr', 'apartment', '416-901-2345', 'Toronto', 'ON', 'M9M 9I9', 1),
-(30, '6465 Winston St', 'house', '416-012-3456', 'Toronto', 'ON', 'M1M 1B1', 5),
-(31, '6667 Yates Rd', 'semidetached house', '416-123-4567', 'Toronto', 'ON', 'M2M 2C2', 3),
-(32, '6869 Zephyr Ave', 'apartment', '416-234-5678', 'Toronto', 'ON', 'M3M 3D3', 2),
-(33, '7071 Applewood Dr', 'house', '403-345-6789', 'Calgary', 'AB', 'T1T 1E1', 4),
-(34, '7273 Birchwood St', 'semidetached house', '403-456-7890', 'Calgary', 'AB', 'T2T 2F2', 3),
-(35, '7475 Cedarwood Ave', 'apartment', '403-567-8901', 'Calgary', 'AB', 'T3T 3G3', 1),
-(36, '7677 Dogwood Rd', 'house', '403-678-9012', 'Calgary', 'AB', 'T4T 4H4', 5),
-(37, '7879 Elmwood Blvd', 'semidetached house', '403-789-0123', 'Calgary', 'AB', 'T5T 5I5', 3),
-(38, '8081 Firwood Dr', 'apartment', '604-901-2345', 'Vancouver', 'BC', 'V1V 1J1', 2),
-(39, '8283 Greenwood St', 'house', '604-012-3456', 'Vancouver', 'BC', 'V2V 2K2', 4),
-(40, '8485 Hickory Ave', 'semidetached house', '604-123-4567', 'Vancouver', 'BC', 'V3V 3L3', 3),
-(41, '8687 Ironwood Rd', 'apartment', '604-234-5678', 'Vancouver', 'BC', 'V4V 4M4', 2),
-(42, '8889 Junewood Dr', 'house', '604-345-6789', 'Vancouver', 'BC', 'V5V 5N5', 5),
-(43, '9091 Kingwood Ave', 'semidetached house', '604-456-7890', 'Vancouver', 'BC', 'V6V 6O6', 3),
-(44, '9293 Lakeview St', 'apartment', '604-567-8901', 'Vancouver', 'BC', 'V7V 7P7', 2),
-(45, '9495 Mapleridge Rd', 'house', '604-678-9012', 'Vancouver', 'BC', 'V8V 8Q8', 4),
-(46, '9697 Narrows Ave', 'condominium', '604-789-0123', 'Vancouver', 'BC', 'V9V 9R9', 2),
-(47, '99101 Oakwood Dr', 'apartment', '613-012-3456', 'Ottawa', 'ON', 'K1K 1S1', 1),
-(48, '103105 Pine Ave', 'house', '613-123-4567', 'Ottawa', 'ON', 'K2K 2T2', 5),
-(49, '107109 Queen St', 'semidetached house', '613-234-5678', 'Ottawa', 'ON', 'K3K 3U3', 3),
-(50, '111113 River Rd', 'apartment', '613-345-6789', 'Ottawa', 'ON', 'K4K 4V4', 2),
-(51, '115117 Sunset Blvd', 'house', '613-456-7890', 'Ottawa', 'ON', 'K5K 5W5', 4),
-(52, '119121 Valley Dr', 'condominium', '613-567-8901', 'Ottawa', 'ON', 'K6K 6X6', 2),
-(53, '123125 Willow Ave', 'apartment', '613-678-9012', 'Ottawa', 'ON', 'K7K 7Y7', 1),
-(54, '127129 Xavier St', 'house', '613-789-0123', 'Ottawa', 'ON', 'K8K 8Z8', 5),
-(55, '131133 Yale Rd', 'semidetached house', '613-890-1234', 'Ottawa', 'ON', 'K9K 9A9', 3),
-(56, '135137 Zephyr Ave', 'apartment', '613-901-2345', 'Ottawa', 'ON', 'K1K 1S1', 2),
-(57, '139141 Applewood Dr', 'house', '613-012-3456', 'Ottawa', 'ON', 'K2K 2T2', 4),
-(58, '143145 Birchwood St', 'semidetached house', '613-123-4567', 'Ottawa', 'ON', 'K3K 3U3', 3),
-(59, '147149 Cedarwood Ave', 'apartment', '613-234-5678', 'Ottawa', 'ON', 'K4K 4V4', 2),
-(60, '151153 Dogwood Rd', 'house', '613-345-6789', 'Ottawa', 'ON', 'K5K 5W5', 4),
-(61, '155157 Elmwood Blvd', 'semidetached house', '613-456-7890', 'Ottawa', 'ON', 'K6K 6X6', 3),
-(62, '159161 Firwood Dr', 'apartment', '613-567-8901', 'Ottawa', 'ON', 'K7K 7Y7', 2),
-(63, '163165 Greenwood St', 'house', '613-678-9012', 'Ottawa', 'ON', 'K8K 8Z8', 5),
-(64, '167169 Hickory Ave', 'semidetached house', '613-789-0123', 'Ottawa', 'ON', 'K9K 9A9', 3),
-(65, '171173 Ironwood Rd', 'apartment', '514-012-3456', 'Montreal', 'QC', 'H1H 1H1', 1),
-(66, '175177 Junewood Dr', 'house', '514-123-4567', 'Montreal', 'QC', 'H2H 2H2', 5),
-(67, '179181 Kingwood Ave', 'semidetached house', '514-234-5678', 'Montreal', 'QC', 'H3H 3H3', 3),
-(68, '183185 Lakeview St', 'apartment', '514-345-6789', 'Montreal', 'QC', 'H4H 4H4', 2),
-(69, '187189 Mapleridge Rd', 'house', '514-456-7890', 'Montreal', 'QC', 'H5H 5H5', 4),
-(70, '191193 Narrows Ave', 'condominium', '514-567-8901', 'Montreal', 'QC', 'H6H 6H6', 2),
-(71, '195197 Oakwood Dr', 'apartment', '514-678-9012', 'Montreal', 'QC', 'H7H 7H7', 1),
-(72, '199201 Pine Ave', 'house', '514-789-0123', 'Montreal', 'QC', 'H8H 8H8', 5),
-(73, '203205 Queen St', 'semidetached house', '514-890-1234', 'Montreal', 'QC', 'H9H 9H9', 3),
-(74, '207209 River Rd', 'apartment', '514-901-2345', 'Montreal', 'QC', 'H1H 1H1', 2),
-(75, '211213 Sunset Blvd', 'house', '514-012-3456', 'Montreal', 'QC', 'H2H 2H2', 4),
-(76, '215217 Valley Dr', 'condominium', '514-123-4567', 'Montreal', 'QC', 'H3H 3H3', 2),
-(77, '219221 Willow Ave', 'apartment', '514-234-5678', 'Montreal', 'QC', 'H4H 4H4', 1),
-(78, '223225 Xavier St', 'house', '514-345-6789', 'Montreal', 'QC', 'H5H 5H5', 5),
-(79, '227229 Yale Rd', 'semidetached house', '514-456-7890', 'Montreal', 'QC', 'H6H 6H6', 3),
-(80, '231233 Zephyr Ave', 'apartment', '514-567-8901', 'Montreal', 'QC', 'H7H 7H7', 2),
-(81, '235237 Applewood Dr', 'house', '514-678-9012', 'Montreal', 'QC', 'H8H 8H8', 4),
-(82, '239241 Birchwood St', 'semidetached house', '514-789-0123', 'Montreal', 'QC', 'H9H 9H9', 3),
-(83, '243245 Cedarwood Ave', 'apartment', '514-890-1234', 'Montreal', 'QC', 'H1H 1H1', 2),
-(84, '247249 Dogwood Rd', 'house', '514-901-2345', 'Montreal', 'QC', 'H2H 2H2', 4),
-(85, '251253 Elmwood Blvd', 'semidetached house', '514-012-3456', 'Montreal', 'QC', 'H3H 3H3', 3),
-(86, '255257 Firwood Dr', 'apartment', '514-123-4567', 'Montreal', 'QC', 'H4H 4H4', 2),
-(87, '259261 Greenwood St', 'house', '514-234-5678', 'Montreal', 'QC', 'H5H 5H5', 5),
-(88, '263265 Hickory Ave', 'condominium', '514-345-6789', 'Montreal', 'QC', 'H6H 6H6', 2),
-(89, '267269 Ironwood Rd', 'apartment', '514-456-7890', 'Montreal', 'QC', 'H7H 7H7', 1),
-(90, '271273 Junewood Dr', 'house', '514-567-8901', 'Montreal', 'QC', 'H8H 8H8', 5),
-(91, '275277 Kingwood Ave', 'semidetached house', '514-678-9012', 'Montreal', 'QC', 'H9H 9H9', 3),
-(92, '279281 Lakeview St', 'apartment', '514-789-0123', 'Montreal', 'QC', 'H1H 1H1', 2),
-(93, '283285 Mapleridge Rd', 'house', '514-890-1234', 'Montreal', 'QC', 'H2H 2H2', 4),
-(94, '287289 Narrows Ave', 'condominium', '514-901-2345', 'Montreal', 'QC', 'H3H 3H3', 2),
-(95, '291293 Oakwood Dr', 'apartment', '514-012-3456', 'Montreal', 'QC', 'H4H 4H4', 1),
-(96, '295297 Pine Ave', 'house', '514-123-4567', 'Montreal', 'QC', 'H5H 5H5', 5),
-(97, '299301 Queen St', 'semidetached house', '514-234-5678', 'Montreal', 'QC', 'H6H 6H6', 3),
-(98, '303305 River Rd', 'apartment', '514-345-6789', 'Montreal', 'QC', 'H7H 7H7', 2),
-(99, '307309 Sunset Blvd', 'house', '514-456-7890', 'Montreal', 'QC', 'H8H 8H8', 4),
-(100, '311313 Valley Dr', 'condominium', '514-567-8901', 'Montreal', 'QC', 'H9H 9H9', 2);
-
 INSERT INTO Persons VALUES
 (1, 962981344, 'Natalie', 'Hall', '1951-04-06', 381295078, '384-147-4044', 'natalie.hall@email.com', 'Canada', 'fulltime'),
 (2, 747977193, 'Hannah', 'Young', '1960-06-05', 251210063, '852-235-8887', 'hannah.young@email.com', 'Canada', 'fulltime'),
@@ -365,6 +165,128 @@ INSERT INTO Persons VALUES
 (149, 877944499, 'Mark', 'Wilson', '1950-11-20', 909609469, '151-681-9580', 'mark.wilson@email.com', 'Canada', 'researcher'),
 (150, 102668293, 'Richard', 'Miller', '1964-10-01', 701044948, '367-613-5276', 'richard.miller@email.com', 'Canada', 'mechanic');
 
+
+CREATE TABLE Residences (
+    rid INT PRIMARY KEY,
+    address VARCHAR(255),
+    type ENUM('apartment', 'condominium', 'semidetached house', 'house'),
+    telephone VARCHAR(15),
+	city VARCHAR(50),	
+    province VARCHAR(50),
+    postalCode VARCHAR(10),
+    bedroom INT
+);
+
+INSERT INTO Residences VALUES
+(1, '1234 Mountain St', 'apartment', '514-123-4567', 'Montreal', 'QC', 'H3H 1Z1', 3),
+(2, '5678 Forest Ave', 'house', '514-234-5678', 'Montreal', 'QC', 'H4H 2X2', 4),
+(3, '91011 River Rd', 'condominium', '514-345-6789', 'Montreal', 'QC', 'H5H 3Y3', 2),
+(4, '1213 Valley Dr', 'semidetached house', '514-456-7890', 'Montreal', 'QC', 'H6H 4W4', 3),
+(5, '1415 Sunset Blvd', 'apartment', '514-567-8901', 'Montreal', 'QC', 'H7H 5V5', 2),
+(6, '1617 Lakeview St', 'house', '514-678-9012', 'Montreal', 'QC', 'H8H 6U6', 5),
+(7, '1819 Maple Ave', 'apartment', '514-789-0123', 'Montreal', 'QC', 'H9H 7T7', 1),
+(8, '2021 Oak St', 'house', '514-890-1234', 'Montreal', 'QC', 'H1H 8R8', 4),
+(9, '2223 Pine Rd', 'semidetached house', '514-901-2345', 'Montreal', 'QC', 'H2H 9Q9', 3),
+(10, '2425 Birch Blvd', 'apartment', '514-012-3456', 'Montreal', 'QC', 'H3H 0P0', 2),
+(11, '2627 Cedar St', 'house', '514-123-4567', 'Montreal', 'QC', 'H4H 1Z1', 5),
+(12, '2829 Elm Ave', 'condominium', '514-234-5678', 'Montreal', 'QC', 'H5H 2X2', 2),
+(13, '3031 Fir Rd', 'semidetached house', '514-345-6789', 'Montreal', 'QC', 'H6H 3Y3', 3),
+(14, '3233 Grove Dr', 'apartment', '514-456-7890', 'Montreal', 'QC', 'H7H 4W4', 2),
+(15, '3435 Hillside Blvd', 'house', '514-567-8901', 'Montreal', 'QC', 'H8H 5V5', 4),
+(16, '3637 Ivy St', 'apartment', '514-678-9012', 'Montreal', 'QC', 'H9H 6U6', 1),
+(17, '3839 Juniper Ave', 'house', '514-789-0123', 'Montreal', 'QC', 'H1H 7T7', 5),
+(18, '4041 King Rd', 'semidetached house', '514-890-1234', 'Montreal', 'QC', 'H2H 8R8', 3),
+(19, '4243 Linden Blvd', 'apartment', '514-901-2345', 'Montreal', 'QC', 'H3H 9Q9', 2),
+(20, '4445 Maplewood St', 'house', '514-012-3456', 'Montreal', 'QC', 'H4H 0P0', 4),
+(21, '4647 Oakwood Ave', 'condominium', '416-123-4567', 'Toronto', 'ON', 'M1M 1A1', 2),
+(22, '4849 Pinehurst Dr', 'house', '416-234-5678', 'Toronto', 'ON', 'M2M 2B2', 4),
+(23, '5051 Queen St', 'apartment', '416-345-6789', 'Toronto', 'ON', 'M3M 3C3', 1),
+(24, '5253 Richmond Ave', 'semidetached house', '416-456-7890', 'Toronto', 'ON', 'M4M 4D4', 3),
+(25, '5455 Somerset Rd', 'house', '416-567-8901', 'Toronto', 'ON', 'M5M 5E5', 5),
+(26, '5657 Taylor St', 'apartment', '416-678-9012', 'Toronto', 'ON', 'M6M 6F6', 2),
+(27, '5859 Union Blvd', 'house', '416-789-0123', 'Toronto', 'ON', 'M7M 7G7', 4),
+(28, '6061 Victoria Ave', 'condominium', '416-890-1234', 'Toronto', 'ON', 'M8M 8H8', 2),
+(29, '6263 Wellington Dr', 'apartment', '416-901-2345', 'Toronto', 'ON', 'M9M 9I9', 1),
+(30, '6465 Winston St', 'house', '416-012-3456', 'Toronto', 'ON', 'M1M 1B1', 5),
+(31, '6667 Yates Rd', 'semidetached house', '416-123-4567', 'Toronto', 'ON', 'M2M 2C2', 3),
+(32, '6869 Zephyr Ave', 'apartment', '416-234-5678', 'Toronto', 'ON', 'M3M 3D3', 2),
+(33, '7071 Applewood Dr', 'house', '403-345-6789', 'Calgary', 'AB', 'T1T 1E1', 4),
+(34, '7273 Birchwood St', 'semidetached house', '403-456-7890', 'Calgary', 'AB', 'T2T 2F2', 3),
+(35, '7475 Cedarwood Ave', 'apartment', '403-567-8901', 'Calgary', 'AB', 'T3T 3G3', 1),
+(36, '7677 Dogwood Rd', 'house', '403-678-9012', 'Calgary', 'AB', 'T4T 4H4', 5),
+(37, '7879 Elmwood Blvd', 'semidetached house', '403-789-0123', 'Calgary', 'AB', 'T5T 5I5', 3),
+(38, '8081 Firwood Dr', 'apartment', '604-901-2345', 'Vancouver', 'BC', 'V1V 1J1', 2),
+(39, '8283 Greenwood St', 'house', '604-012-3456', 'Vancouver', 'BC', 'V2V 2K2', 4),
+(40, '8485 Hickory Ave', 'semidetached house', '604-123-4567', 'Vancouver', 'BC', 'V3V 3L3', 3),
+(41, '8687 Ironwood Rd', 'apartment', '604-234-5678', 'Vancouver', 'BC', 'V4V 4M4', 2),
+(42, '8889 Junewood Dr', 'house', '604-345-6789', 'Vancouver', 'BC', 'V5V 5N5', 5),
+(43, '9091 Kingwood Ave', 'semidetached house', '604-456-7890', 'Vancouver', 'BC', 'V6V 6O6', 3),
+(44, '9293 Lakeview St', 'apartment', '604-567-8901', 'Vancouver', 'BC', 'V7V 7P7', 2),
+(45, '9495 Mapleridge Rd', 'house', '604-678-9012', 'Vancouver', 'BC', 'V8V 8Q8', 4),
+(46, '9697 Narrows Ave', 'condominium', '604-789-0123', 'Vancouver', 'BC', 'V9V 9R9', 2),
+(47, '99101 Oakwood Dr', 'apartment', '613-012-3456', 'Ottawa', 'ON', 'K1K 1S1', 1),
+(48, '103105 Pine Ave', 'house', '613-123-4567', 'Ottawa', 'ON', 'K2K 2T2', 5),
+(49, '107109 Queen St', 'semidetached house', '613-234-5678', 'Ottawa', 'ON', 'K3K 3U3', 3),
+(50, '111113 River Rd', 'apartment', '613-345-6789', 'Ottawa', 'ON', 'K4K 4V4', 2),
+(51, '115117 Sunset Blvd', 'house', '613-456-7890', 'Ottawa', 'ON', 'K5K 5W5', 4),
+(52, '119121 Valley Dr', 'condominium', '613-567-8901', 'Ottawa', 'ON', 'K6K 6X6', 2),
+(53, '123125 Willow Ave', 'apartment', '613-678-9012', 'Ottawa', 'ON', 'K7K 7Y7', 1),
+(54, '127129 Xavier St', 'house', '613-789-0123', 'Ottawa', 'ON', 'K8K 8Z8', 5),
+(55, '131133 Yale Rd', 'semidetached house', '613-890-1234', 'Ottawa', 'ON', 'K9K 9A9', 3),
+(56, '135137 Zephyr Ave', 'apartment', '613-901-2345', 'Ottawa', 'ON', 'K1K 1S1', 2),
+(57, '139141 Applewood Dr', 'house', '613-012-3456', 'Ottawa', 'ON', 'K2K 2T2', 4),
+(58, '143145 Birchwood St', 'semidetached house', '613-123-4567', 'Ottawa', 'ON', 'K3K 3U3', 3),
+(59, '147149 Cedarwood Ave', 'apartment', '613-234-5678', 'Ottawa', 'ON', 'K4K 4V4', 2),
+(60, '151153 Dogwood Rd', 'house', '613-345-6789', 'Ottawa', 'ON', 'K5K 5W5', 4),
+(61, '155157 Elmwood Blvd', 'semidetached house', '613-456-7890', 'Ottawa', 'ON', 'K6K 6X6', 3),
+(62, '159161 Firwood Dr', 'apartment', '613-567-8901', 'Ottawa', 'ON', 'K7K 7Y7', 2),
+(63, '163165 Greenwood St', 'house', '613-678-9012', 'Ottawa', 'ON', 'K8K 8Z8', 5),
+(64, '167169 Hickory Ave', 'semidetached house', '613-789-0123', 'Ottawa', 'ON', 'K9K 9A9', 3),
+(65, '171173 Ironwood Rd', 'apartment', '514-012-3456', 'Montreal', 'QC', 'H1H 1H1', 1),
+(66, '175177 Junewood Dr', 'house', '514-123-4567', 'Montreal', 'QC', 'H2H 2H2', 5),
+(67, '179181 Kingwood Ave', 'semidetached house', '514-234-5678', 'Montreal', 'QC', 'H3H 3H3', 3),
+(68, '183185 Lakeview St', 'apartment', '514-345-6789', 'Montreal', 'QC', 'H4H 4H4', 2),
+(69, '187189 Mapleridge Rd', 'house', '514-456-7890', 'Montreal', 'QC', 'H5H 5H5', 4),
+(70, '191193 Narrows Ave', 'condominium', '514-567-8901', 'Montreal', 'QC', 'H6H 6H6', 2),
+(71, '195197 Oakwood Dr', 'apartment', '514-678-9012', 'Montreal', 'QC', 'H7H 7H7', 1),
+(72, '199201 Pine Ave', 'house', '514-789-0123', 'Montreal', 'QC', 'H8H 8H8', 5),
+(73, '203205 Queen St', 'semidetached house', '514-890-1234', 'Montreal', 'QC', 'H9H 9H9', 3),
+(74, '207209 River Rd', 'apartment', '514-901-2345', 'Montreal', 'QC', 'H1H 1H1', 2),
+(75, '211213 Sunset Blvd', 'house', '514-012-3456', 'Montreal', 'QC', 'H2H 2H2', 4),
+(76, '215217 Valley Dr', 'condominium', '514-123-4567', 'Montreal', 'QC', 'H3H 3H3', 2),
+(77, '219221 Willow Ave', 'apartment', '514-234-5678', 'Montreal', 'QC', 'H4H 4H4', 1),
+(78, '223225 Xavier St', 'house', '514-345-6789', 'Montreal', 'QC', 'H5H 5H5', 5),
+(79, '227229 Yale Rd', 'semidetached house', '514-456-7890', 'Montreal', 'QC', 'H6H 6H6', 3),
+(80, '231233 Zephyr Ave', 'apartment', '514-567-8901', 'Montreal', 'QC', 'H7H 7H7', 2),
+(81, '235237 Applewood Dr', 'house', '514-678-9012', 'Montreal', 'QC', 'H8H 8H8', 4),
+(82, '239241 Birchwood St', 'semidetached house', '514-789-0123', 'Montreal', 'QC', 'H9H 9H9', 3),
+(83, '243245 Cedarwood Ave', 'apartment', '514-890-1234', 'Montreal', 'QC', 'H1H 1H1', 2),
+(84, '247249 Dogwood Rd', 'house', '514-901-2345', 'Montreal', 'QC', 'H2H 2H2', 4),
+(85, '251253 Elmwood Blvd', 'semidetached house', '514-012-3456', 'Montreal', 'QC', 'H3H 3H3', 3),
+(86, '255257 Firwood Dr', 'apartment', '514-123-4567', 'Montreal', 'QC', 'H4H 4H4', 2),
+(87, '259261 Greenwood St', 'house', '514-234-5678', 'Montreal', 'QC', 'H5H 5H5', 5),
+(88, '263265 Hickory Ave', 'condominium', '514-345-6789', 'Montreal', 'QC', 'H6H 6H6', 2),
+(89, '267269 Ironwood Rd', 'apartment', '514-456-7890', 'Montreal', 'QC', 'H7H 7H7', 1),
+(90, '271273 Junewood Dr', 'house', '514-567-8901', 'Montreal', 'QC', 'H8H 8H8', 5),
+(91, '275277 Kingwood Ave', 'semidetached house', '514-678-9012', 'Montreal', 'QC', 'H9H 9H9', 3),
+(92, '279281 Lakeview St', 'apartment', '514-789-0123', 'Montreal', 'QC', 'H1H 1H1', 2),
+(93, '283285 Mapleridge Rd', 'house', '514-890-1234', 'Montreal', 'QC', 'H2H 2H2', 4),
+(94, '287289 Narrows Ave', 'condominium', '514-901-2345', 'Montreal', 'QC', 'H3H 3H3', 2),
+(95, '291293 Oakwood Dr', 'apartment', '514-012-3456', 'Montreal', 'QC', 'H4H 4H4', 1),
+(96, '295297 Pine Ave', 'house', '514-123-4567', 'Montreal', 'QC', 'H5H 5H5', 5),
+(97, '299301 Queen St', 'semidetached house', '514-234-5678', 'Montreal', 'QC', 'H6H 6H6', 3),
+(98, '303305 River Rd', 'apartment', '514-345-6789', 'Montreal', 'QC', 'H7H 7H7', 2),
+(99, '307309 Sunset Blvd', 'house', '514-456-7890', 'Montreal', 'QC', 'H8H 8H8', 4),
+(100, '311313 Valley Dr', 'condominium', '514-567-8901', 'Montreal', 'QC', 'H9H 9H9', 2);
+
+
+CREATE TABLE PrimaryLiving (
+    rid INT,
+    pid INT,
+    FOREIGN KEY (rid) REFERENCES Residences(rid),
+    FOREIGN KEY (pid) REFERENCES Persons(pid),
+    PRIMARY KEY (rid, pid)
+);
 
 INSERT INTO PrimaryLiving VALUES
 (30, 1),
@@ -519,6 +441,14 @@ INSERT INTO PrimaryLiving VALUES
 (45, 150);
 
 
+CREATE TABLE SecondaryLiving (
+    rid INT,
+    pid INT,
+    FOREIGN KEY (rid) REFERENCES Residences(rid),
+    FOREIGN KEY (pid) REFERENCES Persons(pid),
+    PRIMARY KEY (rid, pid)
+);
+
 INSERT INTO SecondaryLiving VALUES
 (33, 87),
 (72, 37),
@@ -627,6 +557,14 @@ INSERT INTO SecondaryLiving VALUES
 (84, 87);
 
 
+CREATE TABLE Relationship (
+    pid1 INT,
+    pid2 INT,
+    type ENUM('roommate', 'partner', 'parent', 'dependent'),
+    FOREIGN KEY (pid1) REFERENCES Persons(pid),
+    FOREIGN KEY (pid2) REFERENCES Persons(pid),
+    PRIMARY KEY (pid1, pid2)
+);
 
 INSERT INTO Relationship VALUES
 (81, 7, 'dependent'),
@@ -680,8 +618,49 @@ INSERT INTO Relationship VALUES
 (110, 108, 'roommate'),
 (124, 113, 'parent');
 
+CREATE TABLE Facilities (
+    fid INT PRIMARY KEY,
+    name VARCHAR(255),
+    address VARCHAR(255),
+    city VARCHAR(50),
+    province VARCHAR(50),
+    postalCode CHAR(10),
+    telephone VARCHAR(15),
+    webAddress VARCHAR(255),
+    type ENUM('hospital', 'CLSC', 'clinic', 'pharmacy', 'special installment'),
+    capacity INT,
+    managerID INT,
+    FOREIGN KEY (managerID) REFERENCES Persons(pid),
+);
+
+INSERT INTO Facilities VALUES
+(1, 'Montreal General Hospital', '1650 Cedar Ave', 'Montreal', 'QC', 'H3G 1A4', '514-934-1934', 'http://montrealgeneralhospital.ca', 'Hospital', 500),
+(2, 'CLSC Cote-des-Neiges', '5700 Côte-des-Neiges Rd', 'Montreal', 'QC', 'H3T 2A8', '514-731-8531', 'http://clsc-cotedesneiges.ca', 'CLSC', 150),
+(3, 'Downtown Montreal Clinic', '1550 De Maisonneuve Blvd', 'Montreal', 'QC', 'H3G 1N2', '514-933-8383', 'http://downtownmontrealclinic.ca', 'clinic', 100),
+(4, 'Pharmaprix', '1120 Ste-Catherine St W', 'Montreal', 'QC', 'H3B 1H4', '514-866-3133', 'http://pharmaprix.ca', 'pharmacy', 50),
+(5, 'Special Installment for Research', '3450 University St', 'Montreal', 'QC', 'H3A 0E8', '514-398-6644', 'http://researchinstallment.ca', 'special installment', 200),
+(6, 'Hospital Maisonneuve Rosemont', '5415 de lAssomption Blvd', 'Montreal', 'QC', 'H1T 2M4', '514-252-3400', 'http://maisonneuverosemonthospital.ca', 'Hospital', 350),
+(7, 'CLSC Montréal South', '6901 Boulevard Decarie', 'Montreal', 'QC', 'H3W 3E4', '514-484-7878', 'http://clscmontrealsouth.ca', 'CLSC', 130),
+(8, 'Old Port Pharmacy', '97 de la Commune St E', 'Montreal', 'QC', 'H2Y 1J1', '514-861-2121', 'http://oldportpharmacy.ca', 'pharmacy', 45),
+(9, 'Mount Royal Clinic', '1260 Remembrance Rd', 'Montreal', 'QC', 'H3H 1A2', '514-849-1234', 'http://mountroyalclinic.ca', 'clinic', 75),
+(10, 'Special Therapy Unit', '1030 Mackay St', 'Montreal', 'QC', 'H3G 2H1', '514-933-4441', 'http://specialtherapyunit.ca', 'special installment', 90),
+(11, 'Vancouver General Hospital', '899 W 12th Ave', 'Vancouver', 'BC', 'V5Z 1M9', '604-875-4111', 'http://vancouvergeneralhospital.ca', 'Hospital', 1000),
+(12, 'Calgary Clinic', '1403 29 St NW', 'Calgary', 'AB', 'T2N 2T9', '403-944-1110', 'http://calgaryclinic.ca', 'clinic', 200),
+(13, 'Royal Alexandra Hospital', '10240 Kingsway NW', 'Edmonton', 'AB', 'T5H 3V9', '780-735-4111', 'http://royalalex.org', 'Hospital', 850),
+(14, 'Saskatoon City Hospital', '701 Queen St', 'Saskatoon', 'SK', 'S7K 0M7', '306-655-8000', 'http://saskatooncityhospital.ca', 'Hospital', 450),
+(15, 'Winnipeg Health Sciences Centre', '820 Sherbrook St', 'Winnipeg', 'MB', 'R3A 1R9', '204-787-3661', 'http://winnipeghealthsciencescentre.ca', 'Hospital', 700);
 
 
+CREATE TABLE Employees (
+    fid INT,
+    pid INT,
+    role ENUM('nurse', 'doctor', 'cashier', 'pharmacist', 'receptionist', 'administrative personnel', 'security personnel', 'regular employee'),
+    startDate DATE,
+    endDate DATE,
+    FOREIGN KEY (fid) REFERENCES Facilities(fid),
+    FOREIGN KEY (pid) REFERENCES Persons(pid),
+    PRIMARY KEY (fid, pid, startDate)
+);
 INSERT INTO Employees VALUES
 (1, 1, 'administrative personnel', '2023-12-29', NULL),
 (2, 2, 'administrative personnel', '2020-12-04', NULL),
@@ -820,6 +799,16 @@ INSERT INTO Employees VALUES
 (10, 135, 'nurse', '2014-12-06', '2024-12-31');
 
 
+CREATE TABLE Vaccines (
+    pid INT,
+    fid INT,
+    date DATE,
+    type ENUM('Pfizer', 'Moderna', 'AstraZeneca', 'Johnson & Johnson'),
+    FOREIGN KEY (pid) REFERENCES Persons(pid),
+    FOREIGN KEY (fid) REFERENCES Facilities(fid),
+    PRIMARY KEY (pid, fid, date)
+);
+
 INSERT INTO Vaccines VALUES
 (1, 10, '2023-09-06', 'Moderna'),
 (2, 4, '2023-04-06', 'Moderna'),
@@ -952,6 +941,14 @@ INSERT INTO Vaccines VALUES
 (140, 2, '2023-10-28', 'AstraZeneca'),
 (141, 5, '2023-07-10', 'AstraZeneca');
 
+
+CREATE TABLE Infections (
+    pid INT,
+    date DATE,
+    type ENUM('COVID-19', 'SARS-Cov-2 Variant', 'other types'),
+    FOREIGN KEY (pid) REFERENCES Persons(pid),
+    PRIMARY KEY (pid, date)
+);
 
 INSERT INTO Infections VALUES
 (3, '2022-11-06', 'COVID-19'),
