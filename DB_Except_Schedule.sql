@@ -630,25 +630,25 @@ CREATE TABLE Facilities (
     type ENUM('hospital', 'CLSC', 'clinic', 'pharmacy', 'special installment'),
     capacity INT,
     managerID INT,
-    FOREIGN KEY (managerID) REFERENCES Persons(pid),
+    FOREIGN KEY (managerID) REFERENCES Persons(pid)
 );
 
 INSERT INTO Facilities VALUES
-(1, 'Montreal General Hospital', '1650 Cedar Ave', 'Montreal', 'QC', 'H3G 1A4', '514-934-1934', 'http://montrealgeneralhospital.ca', 'Hospital', 500),
-(2, 'CLSC Cote-des-Neiges', '5700 Côte-des-Neiges Rd', 'Montreal', 'QC', 'H3T 2A8', '514-731-8531', 'http://clsc-cotedesneiges.ca', 'CLSC', 150),
-(3, 'Downtown Montreal Clinic', '1550 De Maisonneuve Blvd', 'Montreal', 'QC', 'H3G 1N2', '514-933-8383', 'http://downtownmontrealclinic.ca', 'clinic', 100),
-(4, 'Pharmaprix', '1120 Ste-Catherine St W', 'Montreal', 'QC', 'H3B 1H4', '514-866-3133', 'http://pharmaprix.ca', 'pharmacy', 50),
-(5, 'Special Installment for Research', '3450 University St', 'Montreal', 'QC', 'H3A 0E8', '514-398-6644', 'http://researchinstallment.ca', 'special installment', 200),
-(6, 'Hospital Maisonneuve Rosemont', '5415 de lAssomption Blvd', 'Montreal', 'QC', 'H1T 2M4', '514-252-3400', 'http://maisonneuverosemonthospital.ca', 'Hospital', 350),
-(7, 'CLSC Montréal South', '6901 Boulevard Decarie', 'Montreal', 'QC', 'H3W 3E4', '514-484-7878', 'http://clscmontrealsouth.ca', 'CLSC', 130),
-(8, 'Old Port Pharmacy', '97 de la Commune St E', 'Montreal', 'QC', 'H2Y 1J1', '514-861-2121', 'http://oldportpharmacy.ca', 'pharmacy', 45),
-(9, 'Mount Royal Clinic', '1260 Remembrance Rd', 'Montreal', 'QC', 'H3H 1A2', '514-849-1234', 'http://mountroyalclinic.ca', 'clinic', 75),
-(10, 'Special Therapy Unit', '1030 Mackay St', 'Montreal', 'QC', 'H3G 2H1', '514-933-4441', 'http://specialtherapyunit.ca', 'special installment', 90),
-(11, 'Vancouver General Hospital', '899 W 12th Ave', 'Vancouver', 'BC', 'V5Z 1M9', '604-875-4111', 'http://vancouvergeneralhospital.ca', 'Hospital', 1000),
-(12, 'Calgary Clinic', '1403 29 St NW', 'Calgary', 'AB', 'T2N 2T9', '403-944-1110', 'http://calgaryclinic.ca', 'clinic', 200),
-(13, 'Royal Alexandra Hospital', '10240 Kingsway NW', 'Edmonton', 'AB', 'T5H 3V9', '780-735-4111', 'http://royalalex.org', 'Hospital', 850),
-(14, 'Saskatoon City Hospital', '701 Queen St', 'Saskatoon', 'SK', 'S7K 0M7', '306-655-8000', 'http://saskatooncityhospital.ca', 'Hospital', 450),
-(15, 'Winnipeg Health Sciences Centre', '820 Sherbrook St', 'Winnipeg', 'MB', 'R3A 1R9', '204-787-3661', 'http://winnipeghealthsciencescentre.ca', 'Hospital', 700);
+(1, 'Montreal General Hospital', '1650 Cedar Ave', 'Montreal', 'QC', 'H3G 1A4', '514-934-1934', 'http://montrealgeneralhospital.ca', 'Hospital', 500, 1),
+(2, 'CLSC Cote-des-Neiges', '5700 Côte-des-Neiges Rd', 'Montreal', 'QC', 'H3T 2A8', '514-731-8531', 'http://clsc-cotedesneiges.ca', 'CLSC', 150, 2),
+(3, 'Downtown Montreal Clinic', '1550 De Maisonneuve Blvd', 'Montreal', 'QC', 'H3G 1N2', '514-933-8383', 'http://downtownmontrealclinic.ca', 'clinic', 100, 3),
+(4, 'Pharmaprix', '1120 Ste-Catherine St W', 'Montreal', 'QC', 'H3B 1H4', '514-866-3133', 'http://pharmaprix.ca', 'pharmacy', 50, 4),
+(5, 'Special Installment for Research', '3450 University St', 'Montreal', 'QC', 'H3A 0E8', '514-398-6644', 'http://researchinstallment.ca', 'special installment', 200, 5),
+(6, 'Hospital Maisonneuve Rosemont', '5415 de lAssomption Blvd', 'Montreal', 'QC', 'H1T 2M4', '514-252-3400', 'http://maisonneuverosemonthospital.ca', 'Hospital', 350, 6),
+(7, 'CLSC Montréal South', '6901 Boulevard Decarie', 'Montreal', 'QC', 'H3W 3E4', '514-484-7878', 'http://clscmontrealsouth.ca', 'CLSC', 130, 7),
+(8, 'Old Port Pharmacy', '97 de la Commune St E', 'Montreal', 'QC', 'H2Y 1J1', '514-861-2121', 'http://oldportpharmacy.ca', 'pharmacy', 45, 8),
+(9, 'Mount Royal Clinic', '1260 Remembrance Rd', 'Montreal', 'QC', 'H3H 1A2', '514-849-1234', 'http://mountroyalclinic.ca', 'clinic', 75, 9),
+(10, 'Special Therapy Unit', '1030 Mackay St', 'Montreal', 'QC', 'H3G 2H1', '514-933-4441', 'http://specialtherapyunit.ca', 'special installment', 90, 10),
+(11, 'Vancouver General Hospital', '899 W 12th Ave', 'Vancouver', 'BC', 'V5Z 1M9', '604-875-4111', 'http://vancouvergeneralhospital.ca', 'Hospital', 1000, 11),
+(12, 'Calgary Clinic', '1403 29 St NW', 'Calgary', 'AB', 'T2N 2T9', '403-944-1110', 'http://calgaryclinic.ca', 'clinic', 200, 12),
+(13, 'Royal Alexandra Hospital', '10240 Kingsway NW', 'Edmonton', 'AB', 'T5H 3V9', '780-735-4111', 'http://royalalex.org', 'Hospital', 850, 13),
+(14, 'Saskatoon City Hospital', '701 Queen St', 'Saskatoon', 'SK', 'S7K 0M7', '306-655-8000', 'http://saskatooncityhospital.ca', 'Hospital', 450, 14),
+(15, 'Winnipeg Health Sciences Centre', '820 Sherbrook St', 'Winnipeg', 'MB', 'R3A 1R9', '204-787-3661', 'http://winnipeghealthsciencescentre.ca', 'Hospital', 700, 15);
 
 
 CREATE TABLE Employees (
