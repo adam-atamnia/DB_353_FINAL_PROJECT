@@ -659,7 +659,8 @@ CREATE TABLE Employees (
     endDate DATE,
     FOREIGN KEY (fid) REFERENCES Facilities(fid),
     FOREIGN KEY (pid) REFERENCES Persons(pid),
-    PRIMARY KEY (fid, pid, startDate)
+    PRIMARY KEY (fid, pid, startDate),
+    CHECK (startDate = NULL or endDate = NULL or startDate < endDate)
 );
 INSERT INTO Employees VALUES
 (1, 1, 'administrative personnel', '2023-12-29', NULL),

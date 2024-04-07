@@ -1,4 +1,4 @@
-select * from Schedule;
+select * from Schedule where pid = 63;
 
 select * from Employees where role = 'nurse' or role = 'doctor';
 
@@ -13,8 +13,8 @@ VALUES (63, 1, '2024-04-10', '19:21', '20:21');
 INSERT INTO Infections VALUES
 (63, '2044-04-07', 'COVID-19');
 
-update Infections
-set type = 'COVID-19', date = '2023-11-02'
+update Schedule
+set date = '2024-04-10'
 where pid = 63;
 
 SELECT 

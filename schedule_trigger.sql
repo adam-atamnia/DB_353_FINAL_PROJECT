@@ -1,10 +1,13 @@
-drop trigger before_schedule_insert;
+drop procedure if exists validateNewSchedule;
 
 delimiter $$
-
-create trigger before_schedule_insert
-before insert on Schedule
-for each row
+create procedure validateNewSchedule(
+	in new_pid int,
+    in new_date date, 
+    in new_startTime time,
+    in new_endTime time,
+    in new_id int
+)
 begin
 	
     declare isInsertValid boolean;
@@ -13,7 +16,7 @@ begin
     set isInsertValid = true;
     set message = '???';
 
-	if (new.startTime >= new.endTime) then # Start time cannot be greater than the end time.
+	if (new_startTime >= new_endTime) then # Start time cannot be greater than the end time.
 		set isInsertValid = false;
 		set message = 'Start time has to be smaller than end time.';
     elseif (0 != (
@@ -23,11 +26,19 @@ begin
         FROM
 			Schedule s2
 		WHERE
-			new.date = s2.date AND new.pid = s2.pid
-				AND ((new.startTime <= s2.startTime
-				AND new.endTime > s2.startTime)
-				OR (new.startTime < s2.endTime
-				AND new.endTime >= s2.endTime))
+			new_date = s2.date AND new_pid = s2.pid
+				AND new_id != s2.id 
+				AND (
+					(
+                    new_startTime <= s2.startTime
+					AND new_endTime > s2.startTime
+					)
+					OR 
+                    (
+					new_startTime < s2.endTime
+					AND new_endTime >= s2.endTime
+					)
+                )
 			)
 		)
 	then
@@ -40,11 +51,12 @@ begin
         FROM
             Schedule s2
         WHERE
-            new.date = s2.date AND new.pid = s2.pid
+            new_date = s2.date AND new_pid = s2.pid
+				AND new_id != s2.id 
                 AND (
-					(new.endTime > DATE_SUB(s2.startTime, INTERVAL 2 HOUR) and new.endTime <= s2.startTime)
+					(new_endTime > DATE_SUB(s2.startTime, INTERVAL 2 HOUR) and new_endTime <= s2.startTime)
 					OR 
-					(new.startTime < DATE_ADD(s2.endTime, INTERVAL 2 HOUR) and new.startTime >= s2.endTime)
+					(new_startTime < DATE_ADD(s2.endTime, INTERVAL 2 HOUR) and new_startTime >= s2.endTime)
 				)
 			)
 		)
@@ -57,12 +69,12 @@ begin
 		select count(*)
 		from Employees e, Infections i
 		where 
-			new.pid = e.pid and
-			new.pid = i.pid and 
+			new_pid = e.pid and
+			new_pid = i.pid and 
 			i.type = 'COVID-19' and
 			(e.role = 'nurse' or e.role = 'doctor') and
-			new.date >= i.date and
-			new.date <= date_add(i.date, interval 2 week)
+			new_date >= i.date and
+			new_date <= date_add(i.date, interval 2 week)
 			)
 		)
 	then
@@ -75,9 +87,9 @@ begin
                 FROM
                     Vaccines
                 WHERE
-                    new.pid = pid
-					AND date >= DATE_SUB(new.date, INTERVAL 6 MONTH)
-                    AND date <= new.date
+                    new_pid = pid
+					AND date >= DATE_SUB(new_date, INTERVAL 6 MONTH)
+                    AND date <= new_date
 				)
 			)
 	then
@@ -87,9 +99,51 @@ begin
 	end if;
     
     if isInsertValid = false then
-		#set message = concat('ID: ', new.id, ' - ', message);
+		#set message = concat('ID: ', new_id, ' - ', message);
 		signal sqlstate '45000' set message_text = message;
 	end if;
+
+end $$
+delimiter ;
+
+drop trigger if exists before_schedule_insert;
+
+delimiter $$
+
+create trigger before_schedule_insert
+before insert on Schedule
+for each row
+begin
+	
+   call validateNewSchedule(
+		new.pid,
+		new.date, 
+		new.startTime,
+		new.endTime,
+        new.id
+   );
+
+end$$
+
+delimiter ;
+
+
+drop trigger if exists before_schedule_update;
+
+delimiter $$
+
+create trigger before_schedule_update
+before update on Schedule
+for each row
+begin
+	
+   call validateNewSchedule(
+		new.pid,
+		new.date, 
+		new.startTime,
+		new.endTime,
+        new.id
+   );
 
 end$$
 
