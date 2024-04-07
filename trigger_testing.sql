@@ -8,7 +8,10 @@ select * from Vaccines;
 select * from Infections;
 
 INSERT INTO Schedule (pid, fid, date, startTime, endTime) 
-VALUES (63, 1, '2023-11-10', '19:21', '20:21');
+VALUES (63, 1, '2024-04-10', '19:21', '20:21');
+
+INSERT INTO Infections VALUES
+(63, '2044-04-07', 'COVID-19');
 
 update Infections
 set type = 'COVID-19', date = '2023-11-02'
