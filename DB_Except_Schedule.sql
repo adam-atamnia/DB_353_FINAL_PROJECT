@@ -566,6 +566,7 @@ CREATE TABLE Relationship (
     PRIMARY KEY (pid1, pid2)
 );
 
+# pid1 is type of pid2, example John is dependent of Paul
 INSERT INTO Relationship VALUES
 (81, 7, 'dependent'),
 (13, 136, 'dependent'),
