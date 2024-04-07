@@ -1,3 +1,5 @@
+drop trigger after_schedule_insert;
+
 delimiter $$
 
 create trigger after_schedule_insert
@@ -41,7 +43,7 @@ begin
                 AND s.date >= i.date
                 AND s.date <= DATE_ADD(i.date, INTERVAL 1 WEEK)))
     or (0 = (SELECT 
-            COUNT(s.pid)
+            COUNT(pid)
         FROM
             Schedule s
         WHERE
