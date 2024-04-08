@@ -1,4 +1,4 @@
-Drop TABLE IF EXISTS Schedule, Relationship,Residences,PrimaryLiving,SecondaryLiving, Employees, Vaccines, Infections, Persons, Facilities;
+Drop TABLE IF EXISTS EmailLog, Schedule, Relationship,Residences,PrimaryLiving,SecondaryLiving, Employees, Vaccines, Infections, Persons, Facilities;
 
 CREATE TABLE IF NOT EXISTS Persons (
     pid INT PRIMARY KEY,
@@ -1017,3 +1017,18 @@ INSERT INTO Infections VALUES
 (111, '2023-04-01', 'COVID-19'),
 (49, '2023-04-01', 'COVID-19'),
 (120, '2023-04-01', 'COVID-19');
+
+
+CREATE TABLE if not exists EmailLog (
+    eid INT auto_increment primary key
+    pidreceiver INT,
+    fidsender INT,
+    date DATE,
+    subject VARCHAR(255),
+    body VARCHAR(100), # first 11 characters of the body
+    FOREIGN KEY (pid)
+        REFERENCES Persons (pid),
+    FOREIGN KEY (fid)
+        REFERENCES Facilities (fid),
+    
+);
