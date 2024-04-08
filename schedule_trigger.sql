@@ -137,13 +137,16 @@ before update on Schedule
 for each row
 begin
 	
-   call validateNewSchedule(
-		new.pid,
-		new.date, 
-		new.startTime,
-		new.endTime,
-        new.id
-   );
+    if new.isCanceled = false then
+    
+	   call validateNewSchedule(
+			new.pid,
+			new.date, 
+			new.startTime,
+			new.endTime,
+			new.id
+	   );
+	end if;
 
 end$$
 

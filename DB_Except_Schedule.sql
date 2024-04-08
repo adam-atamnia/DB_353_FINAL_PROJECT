@@ -1041,6 +1041,7 @@ CREATE TABLE if not exists Schedule (
     date DATE,
     startTime TIME,
     endTime TIME,
+    isCanceled boolean default false,
     FOREIGN KEY (pid)
         REFERENCES Persons (pid),
     FOREIGN KEY (fid)
