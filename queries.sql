@@ -38,7 +38,66 @@ end $$
 delimiter ;
 
 call detailPeopleWhoLiveWith(1);
+
+# -------------- 15 by adam
         
+/*
+
+ Get details of nurses who are currently working at two or more different facilities and 
+have been infected by COVID-19 in the last two weeks. Details include first-name, 
+last-name, first day of work as a nurse, date of birth, email address, total number of 
+times the nurse got infected by COVID-19, total number of vaccines the nurse had, 
+total number of hours scheduled, and total number of secondary residences. Results 
+should be displayed sorted in ascending order by first day of work, then by first name, 
+then by last name.
+
+*/
+
+select per.firstName, per.lastName, cp.startDate, per.dateOfBirth, per.email, cp.icount, count(v.pid), sum(s.endTime - s.startTime), count(sec.rid)
+	from Persons per
+    join Infections i on per.pid = i.pid
+    join Vaccines v on v.pid = per.pid
+    join Schedule s on s.pid = per.pid
+    join SecondaryLiving sec on sec.pid = per.pid
+    join (
+    
+		# nurses who are currently working at two or more different facilities and have been infected by COVID-19 in the last two weeks.
+		select p.pid, e1.startDate, count(i.pid) as icount
+			from Employees e1, Employees e2, Infections i, Persons p
+			where 
+				e1.pid = e2.pid
+				and e1.fid < e2.fid
+				and e1.endDate = null
+				and e2.endDate = null
+				and e1.role = 'nurse'
+				and e1.pid = i.pid
+				and i.type = 'COVID-19'
+				and i.date >= DATE_SUB(CURDATE(), INTERVAL 2 WEEK)
+				and e1.pid = p.pid
+			group by p.pid, e1.startDate
+    
+    ) cp on cp.pid = per.pid
+    group by per.firstName, per.lastName, cp.startDate, per.dateOfBirth, per.email, cp.icount
+    order by cp.startDate, per.firstName, per.lastName;
+
+	
+    
+    # testing
+    select p.pid, e1.startDate, count(i.pid) as icount
+			from Employees e1, Employees e2, Infections i, Persons p
+			where 
+				e1.pid = e2.pid
+				and e1.fid < e2.fid
+				and e1.endDate = null
+				and e2.endDate = null
+				and e1.role = 'nurse'
+				and e1.pid = i.pid
+				and i.type = 'COVID-19'
+				and i.date >= DATE_SUB(CURDATE(), INTERVAL 100 month )
+				and e1.pid = p.pid
+			group by p.pid, e1.startDate;
+
+# -------------- 15 by adam
     
 
 
