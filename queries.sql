@@ -1,3 +1,61 @@
+#8
+/*
+Get details of all the facilities recorded in the system. Details include facility name,
+address, city, province, postal-code, phone number, web address, type, capacity, name
+of the general manager, number of employees currently working at the facility, number
+of doctors currently working in the facility, and number of nurses currently working in
+the facility. Results should be displayed sorted in ascending order by province, then by
+city, then by type, then by number of doctors currently working for the facility.	
+*/	
+drop procedure if exists detailOfFacilitiesByRoles
+delimiter $$
+create procedure detailOfFacilitiesByRoles()	
+SELECT 
+    E.fid,
+    F.address,
+    F.city,
+    F.province,
+    F.postalCode,
+    F.telephone,
+    F.webAddress,
+    F.type,
+    F.capacity,
+    COUNT(*) AS numEmployees,
+    SUM(CASE WHEN E.role = 'doctor' THEN 1 ELSE 0 END) AS numDoctors,
+    SUM(CASE WHEN E.role = 'nurse' THEN 1 ELSE 0 END) AS numNurses,
+    P_manager.firstName AS managerFirstName,
+    P_manager.lastName AS managerLastName
+FROM 
+    Employees AS E
+JOIN
+    Persons AS P ON E.pid = P.pid
+JOIN
+    Facilities AS F ON E.fid = F.fid
+LEFT JOIN
+    Persons AS P_manager ON F.managerID = P_manager.pid
+GROUP BY
+    E.fid,
+    F.address,
+    F.city,
+    F.province,
+    F.postalCode,
+    F.telephone,
+    F.webAddress,
+    F.type,
+    F.capacity,
+    P_manager.firstName,
+    P_manager.lastName
+ORDER BY
+    F.province,
+    F.city,
+    F.type,
+    numDoctors;
+end $$
+
+delimiter ;
+call detailOfFacilitiesByRoles();
+
+
 #9
 #lets say facility id is 5
 /*
@@ -94,7 +152,7 @@ end $$
 
 delimiter ;
 
-call detailPersonScheduleInTimeFrame(4,'2024-03-24','2024-04-24')
+call detailPersonScheduleInTimeFrame(4,'2024-03-24','2024-04-24');
 # 11 
 # lets say person id is 1
 /*
@@ -185,7 +243,7 @@ ORDER BY
 end $$
 
 delimiter ;
-call detailDoctorsInfected('2023-04-02') 
+call detailDoctorsInfected('2023-04-02') ;
 	
 #13
 #Let's say given_fid =1, start_date = 2024-24-03 and end_date = 2024-24-04
@@ -226,7 +284,55 @@ ORDER BY
 end $$
 
 delimiter ;
-call detailCancelledAppointmentsByFID(1,'2024-24-03','2024-24-04')
+call detailCancelledAppointmentsByFID(1,'2024-24-03','2024-24-04');
+
+#14
+#Let's say fid is 10 and specified_date is '2024-04-01'
+/*
+ For a given facility, generate a list of all the employees who have at least three
+secondary residences and who have been on schedule to work in the last four weeks.
+The list should include first-name, last-name, role, number of secondary residences.
+Results should be displayed in ascending order by role, then by the number of
+secondary residences
+*/
+
+drop procedure if exists detailSecondaryResidenceAndScheduled;
+
+delimiter $$
+create procedure detailSecondaryResidenceAndScheduled(
+	in given_fid int,
+	in specified_date DATE
+)
+begin
+	
+SELECT 
+    P.firstName,
+    P.lastName,
+    E.role,
+    (SELECT COUNT(DISTINCT SL.rid)
+     FROM SecondaryLiving SL
+     WHERE SL.pid = E.pid) AS numberOfSecondaryResidences
+FROM 
+    Employees E
+JOIN 
+    Persons P ON E.pid = P.pid
+JOIN 
+    Schedule S ON E.pid = S.pid
+WHERE 
+    E.fid = given_fid
+    AND S.date BETWEEN DATE_SUB(specified_date, INTERVAL 4 WEEK) AND specified_date
+GROUP BY 
+    E.pid, E.role
+HAVING 
+    numberOfSecondaryResidences >= 3
+ORDER BY 
+    E.role ASC, 
+    numberOfSecondaryResidences ASC;
+
+end $$
+
+delimiter ;
+call detailSecondaryResidenceAndScheduled(10,'2024-04-01');
 	
 #15
 #Find Example
@@ -282,7 +388,7 @@ WHERE
         	AND E1.role = 'nurse'
         	AND E1.fid != E2.fid
             AND (I.type = 'COVID-19' OR I.type ='SARS-Cov-2 Variant' OR I.type = 'other types')
-            AND I.date >= DATE_SUB('2023-04-01', INTERVAL 2 WEEK) AND I.date <= '2023-04-01'
+            AND I.date >= DATE_SUB(specified_date, INTERVAL 2 WEEK) AND I.date <= specified_date
 GROUP BY
 	P.pid	
 ORDER BY
@@ -293,6 +399,71 @@ end $$
 
 delimiter ;
 
+#16	
+ /*
+Provide a report of all the employees working in all the facilities by role. Report should
+include for every role of the employees, the total number of employees currently
+working in the facilities, and the total number of employees currently infected by
+COVID-19. Report should be displayed in ascending order by role
+*/
+
+drop procedure if exists detailEmployeeRolesInFacilities;
+
+delimiter $$
+create procedure detailEmployeeRolesInFacilities()
+begin
+	
+SELECT 
+    E.role,
+    COUNT(DISTINCT E.pid) AS totalWorkingEmployees,
+    SUM(
+        CASE -- Assume that currently infected means got infected in last 2 weeks
+            WHEN I.pid IS NOT NULL AND I.date BETWEEN DATE_SUB(CURDATE(), INTERVAL 2 WEEK) AND CURDATE() THEN 1 
+            ELSE 0 
+        END
+    ) AS totalInfectedByCovidNow
+FROM 
+    Employees E
+LEFT JOIN 
+    Infections I ON E.pid = I.pid
+WHERE 
+    E.endDate IS NULL 
+GROUP BY 
+    E.role
+ORDER BY 
+    E.role ASC;
+end $$
+
+delimiter ;
+call detailEmployeeRolesInFacilities()
+
+#17
+/*
+Provide a report of all the employees working in all the facilities by role. Report should
+include for every role of the employees, the total number of employees currently
+working in the facilities, and the total number of employees who have never been
+infected by COVID-19. Report should be displayed in ascending order by role.
+*/
+drop procedure if exists detailNeverInfected;
+
+delimiter $$
+create procedure detailNeverInfected()
+begin	
+SELECT 
+    E.role,
+    COUNT(DISTINCT E.pid) AS totalWorkingEmployees,
+    COUNT(DISTINCT CASE WHEN NOT EXISTS (SELECT 1 FROM Infections I WHERE I.pid = E.pid) THEN E.pid END) AS neverInfectedByCovid
+FROM 
+    Employees E
+WHERE 
+    E.endDate IS NULL
+GROUP BY 
+    E.role
+ORDER BY 
+    E.role ASC;
+
+delimiter ;
+call detailNeverInfected();
 
 #18
 #let start_date be 2024-03-24 and end_date be 2024-03-25
@@ -313,22 +484,23 @@ create procedure detailFacilitiesByProvince(
     in end_date DATE
 )
 begin
-SELECT 
-        F.province,
-        COUNT(DISTINCT F.fid) AS total_facilities,
-        COUNT(DISTINCT E.pid ) AS total_employees_working,
-        SUM(distinct E.pid AND CASE WHEN (S.isCanceled = 1) THEN 1 ELSE 0 END) AS total_infected_employees,
-        SUM(DISTINCT F.capacity) AS maximum_capacity,
-     SUM(TIMESTAMPDIFF(HOUR, S.startTime,S.endTime)) AS total_hours_scheduled
+SELECT
+    F.province,
+    COUNT(DISTINCT F.fid) AS totalFacilities,
+    COUNT(DISTINCT E.pid) AS totalWorkingEmployees,
+    COUNT(DISTINCT CASE WHEN I.pid IS NOT NULL THEN I.pid END) AS totalInfectedEmployees, 
+    SUM(DISTINCT F.capacity) AS totalFacilityCapacity,
+    SUM(TIMESTAMPDIFF(HOUR, S.startTime, S.endTime)) AS totalScheduledHours 
 FROM 
-        Schedule AS S 
+    Schedule S 
 JOIN 
-        Employees AS E ON S.pid = E.pid
+    Employees E ON S.pid = E.pid AND E.endDate IS NULL
+LEFT JOIN 
+    Infections I ON E.pid = I.pid AND I.date BETWEEN start_date AND end_date
 JOIN 
-        Facilities AS F ON S.fid= F.fid
+    Facilities F ON F.fid = S.fid
 WHERE 
     S.date BETWEEN start_date AND end_date
-    AND E.endDate IS NULL
 GROUP BY 
     F.province
 ORDER BY 
@@ -336,7 +508,7 @@ ORDER BY
 end $$
 
 delimiter ;
-detailFacilitiesByProvince('2024-03-24','2024-03-25')
+call detailFacilitiesByProvince('2024-03-24','2024-03-25');
 
 
 # -------------- 15 by adam
