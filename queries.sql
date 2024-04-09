@@ -186,8 +186,9 @@ end $$
 
 delimiter ;
 call detailDoctorsInfected('2023-04-02') 
+	
 #13
-#Find Example
+#Let's say given_fid =1, start_date = 2024-24-03 and end_date = 2024-24-04
 /*
 For a given facility, list the emails generated for the cancellation of assignments during
 a specific period of time. The results should be displayed in descending order by the
@@ -225,7 +226,8 @@ ORDER BY
 end $$
 
 delimiter ;
-
+call detailCancelledAppointmentsByFID(1,'2024-24-03','2024-24-04')
+	
 #15
 #Find Example
 /*
