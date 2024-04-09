@@ -410,15 +410,17 @@ COVID-19. Report should be displayed in ascending order by role
 drop procedure if exists detailEmployeeRolesInFacilities;
 
 delimiter $$
-create procedure detailEmployeeRolesInFacilities()
+create procedure detailEmployeeRolesInFacilities(
+in specified_date
+)
 begin
 	
 SELECT 
     E.role,
     COUNT(DISTINCT E.pid) AS totalWorkingEmployees,
     SUM(
-        CASE -- Assume that currently infected means got infected in last 2 weeks
-            WHEN I.pid IS NOT NULL AND I.date BETWEEN DATE_SUB(CURDATE(), INTERVAL 2 WEEK) AND CURDATE() THEN 1 
+        CASE 
+            WHEN I.pid IS NOT NULL AND I.date BETWEEN DATE_SUB(specified_date, INTERVAL 2 WEEK) AND specified_date THEN 1 
             ELSE 0 
         END
     ) AS totalInfectedByCovidNow
@@ -435,7 +437,7 @@ ORDER BY
 end $$
 
 delimiter ;
-call detailEmployeeRolesInFacilities()
+call detailEmployeeRolesInFacilities('2024-04-10')
 
 #17
 /*
