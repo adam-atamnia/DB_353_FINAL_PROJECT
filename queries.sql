@@ -390,16 +390,14 @@ and the total number of employees currently infected by COVID-19. Report should 
 */
 DROP PROCEDURE IF EXISTS detailEmployeeRolesInFacilities;
 DELIMITER $$
-CREATE PROCEDURE detailEmployeeRolesInFacilities(
-	in Current_Date DATE
-)
+CREATE PROCEDURE detailEmployeeRolesInFacilities()
 BEGIN
     SELECT 
         E.role,
         COUNT(DISTINCT E.pid) AS totalWorkingEmployees,
         SUM(
             CASE -- Assume that currently infected means got infected in last 2 weeks
-                WHEN I.pid IS NOT NULL AND I.date BETWEEN DATE_SUB(Current_Date, INTERVAL 2 WEEK) AND Current_Date THEN 1 
+                WHEN I.pid IS NOT NULL AND I.date BETWEEN DATE_SUB(CURDATE(), INTERVAL 2 WEEK) AND CURDATE() THEN 1 
                 ELSE 0 
             END
         ) AS totalInfectedByCovidNow
@@ -416,7 +414,7 @@ BEGIN
 END$$
 DELIMITER ;
 
-CALL detailEmployeeRolesInFacilities('2024-04-02');
+CALL detailEmployeeRolesInFacilities();
 
 #17
 /*
@@ -463,8 +461,7 @@ BEGIN
         COUNT(DISTINCT F.fid) AS totalFacilities,
         COUNT(DISTINCT E.pid) AS totalWorkingEmployees,
         COUNT(DISTINCT CASE WHEN I.pid IS NOT NULL THEN I.pid END) AS totalInfectedEmployees, 
-        MAX(F.capacity) AS maxFacilityCapacity,
-        #SUM(DISTINCT F.capacity) AS totalFacilityCapacity,
+        SUM(DISTINCT F.capacity) AS totalFacilityCapacity,
         SUM(TIMESTAMPDIFF(HOUR, S.startTime, S.endTime)) AS totalScheduledHours 
     FROM 
         Schedule S 
