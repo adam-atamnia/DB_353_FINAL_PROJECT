@@ -166,48 +166,37 @@ CREATE PROCEDURE detailPeopleWhoLiveWith(
     IN given_pid INT
 )
 BEGIN
-    SELECT DISTINCT
-        per.pid,
-        per.firstName,
-        per.lastName,
-        per.occupation,
-        rela.pid1,
-        rela.pid2,
-        rela.type,
-        r1.rid,
-        r1.type,
-        r1.address,
-        r1.isPrimary
-    FROM
-        Persons per
-    LEFT OUTER JOIN
-        Relationship rela ON ((rela.pid1 = per.pid AND rela.pid2 = given_pid) OR (rela.pid1 = given_pid AND rela.pid2 = per.pid))
-    JOIN
-        PrimaryLiving p ON per.pid = p.pid
-    JOIN
-        SecondaryLiving s ON per.pid = s.pid
-    JOIN
-        (SELECT DISTINCT
-            r.rid,
-            r.type,
-            r.address,
-            r.rid = p.rid AS isPrimary
-        FROM
-            PrimaryLiving p,
-            SecondaryLiving s,
-            Residences r
-        WHERE
-            p.pid = given_pid
-            AND p.pid = s.pid
-            AND (r.rid = p.rid OR r.rid = s.rid)
-        ) r1 ON r1.rid = p.rid OR r1.rid = s.rid
-    WHERE
-        per.pid != given_pid;
+DROP VIEW IF EXISTS Living;
+CREATE VIEW Living(pid, rid) AS
+SELECT p.pid, p.rid 
+FROM PrimaryLiving AS p
+UNION
+SELECT s.pid, s.rid 
+FROM SecondaryLiving AS s;
+
+SELECT 
+    -- Residence
+    l1.rid AS ResidenceID,
+    res.address AS Address,
+    res.type AS ResidenceType,
+    -- Roommate
+    l2.pid AS RoommatePID,
+    p.firstName AS FirstName,
+    p.lastName AS LastName,
+    p.occupation AS Occupation,
+    COALESCE(rel.type, 'Roommate') AS RelationshipType -- Defaults to 'Roommate' if no relationship type is specified
+FROM 
+    Living AS l1
+LEFT JOIN Living AS l2 ON l1.rid = l2.rid AND l1.pid <> l2.pid
+JOIN Persons AS p ON p.pid = l2.pid
+LEFT JOIN Relationship AS rel ON (rel.pid1 = l1.pid AND rel.pid2 = l2.pid) OR (rel.pid2 = l1.pid AND rel.pid1 = l2.pid)
+JOIN Residences AS res ON res.rid = l1.rid
+
+WHERE 
+    l1.pid = given_pid;
 
 END$$
 DELIMITER ;
-
-# lets say person id is 1
 CALL detailPeopleWhoLiveWith(1);
 
 #12
