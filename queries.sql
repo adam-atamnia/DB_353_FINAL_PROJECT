@@ -11,7 +11,8 @@ DELIMITER $$
 CREATE PROCEDURE detailOfFacilitiesByRoles()
 BEGIN
     SELECT 
-        E.fid,
+		F.fid,
+        F.name,
         F.address,
         F.city,
         F.province,
@@ -20,11 +21,11 @@ BEGIN
         F.webAddress,
         F.type,
         F.capacity,
+		P_manager.firstName AS managerFirstName,
+        P_manager.lastName AS managerLastName,
         COUNT(*) AS numEmployees,
         SUM(CASE WHEN E.role = 'doctor' THEN 1 ELSE 0 END) AS numDoctors,
-        SUM(CASE WHEN E.role = 'nurse' THEN 1 ELSE 0 END) AS numNurses,
-        P_manager.firstName AS managerFirstName,
-        P_manager.lastName AS managerLastName
+        SUM(CASE WHEN E.role = 'nurse' THEN 1 ELSE 0 END) AS numNurses
     FROM 
         Employees AS E
     JOIN
@@ -35,16 +36,7 @@ BEGIN
         Persons AS P_manager ON F.managerID = P_manager.pid
     GROUP BY
         E.fid,
-        F.address,
-        F.city,
-        F.province,
-        F.postalCode,
-        F.telephone,
-        F.webAddress,
-        F.type,
-        F.capacity,
-        P_manager.firstName,
-        P_manager.lastName
+        P_manager.pid
     ORDER BY
         F.province,
         F.city,
