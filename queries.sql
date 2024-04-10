@@ -406,14 +406,16 @@ and the total number of employees currently infected by COVID-19. Report should 
 */
 DROP PROCEDURE IF EXISTS detailEmployeeRolesInFacilities;
 DELIMITER $$
-CREATE PROCEDURE detailEmployeeRolesInFacilities()
+CREATE PROCEDURE detailEmployeeRolesInFacilities(
+	in Current_Date DATE
+)
 BEGIN
     SELECT 
         E.role,
         COUNT(DISTINCT E.pid) AS totalWorkingEmployees,
         SUM(
             CASE -- Assume that currently infected means got infected in last 2 weeks
-                WHEN I.pid IS NOT NULL AND I.date BETWEEN DATE_SUB(CURDATE(), INTERVAL 2 WEEK) AND CURDATE() THEN 1 
+                WHEN I.pid IS NOT NULL AND I.date BETWEEN DATE_SUB(Current_Date, INTERVAL 2 WEEK) AND Current_Date THEN 1 
                 ELSE 0 
             END
         ) AS totalInfectedByCovidNow
@@ -430,7 +432,7 @@ BEGIN
 END$$
 DELIMITER ;
 
-CALL detailEmployeeRolesInFacilities();
+CALL detailEmployeeRolesInFacilities('2024-04-02');
 
 #17
 /*
