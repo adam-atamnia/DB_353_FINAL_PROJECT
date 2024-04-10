@@ -352,21 +352,22 @@ CREATE PROCEDURE detailInfectedNurseInTwoFacilities(
     IN specified_date DATE
 )
 BEGIN
-    SELECT
-        P.firstName,
+   SELECT
+		P.pid,
+        P.firstName,	
         P.lastName,
         E1.startDate,
         P.dateOfBirth,
         P.email,
-        COUNT(I.pid) AS numInfections,
-        COUNT(V.pid) AS numVaccines,
+        count(distinct I.pid) AS numInfections,
+        COUNT(distinct V.pid) AS numVaccines,
         SUM(TIMESTAMPDIFF(HOUR, S.startTime, S.endTime)) AS total_hours_scheduled,
         COALESCE(SR.numSecondaryResidences, 0) AS num_secondary_residences
     FROM
         Employees AS E1
     JOIN
         Employees AS E2 ON E1.pid = E2.pid
-    JOIN 
+   Left JOIN 
         Infections AS I ON E1.pid = I.pid
     JOIN
         Persons AS P ON E1.pid = P.pid
@@ -384,14 +385,16 @@ BEGIN
             AND E2.endDate IS NULL
             AND E1.role = 'nurse'
             AND E1.fid != E2.fid
-            AND (I.type = 'COVID-19' OR I.type ='SARS-Cov-2 Variant' OR I.type = 'other types')
-            AND I.date >= DATE_SUB(specified_date, INTERVAL 2 WEEK) AND I.date <= specified_date
+            AND (I.type = 'COVID-19' OR I.type ='SARS-Cov-2 Variant' OR I.type = 'other types' )
+            AND S.date >= DATE_SUB(specified_date, INTERVAL 2 WEEK) AND S.date <= specified_date
+            AND S.isCanceled =1
     GROUP BY
         P.pid    
     ORDER BY
         E1.startDate ASC,
         P.firstName ASC,
         P.lastName ASC;
+
 END$$
 DELIMITER ;
 
