@@ -1,4 +1,5 @@
-Drop TABLE IF EXISTS EmailLog, Schedule, Relationship,Residences,PrimaryLiving,SecondaryLiving, Employees, Vaccines, Infections, Persons, Facilities;
+Drop TABLE IF EXISTS EmailLog, Schedule, Relationship,Residences,PrimaryLiving,SecondaryLiving, 
+    Employees, Vaccines, Infections, Persons, Facilities, Schedule;;
 
 CREATE TABLE IF NOT EXISTS Persons (
     pid INT PRIMARY KEY,
@@ -1032,8 +1033,6 @@ CREATE TABLE if not exists EmailLog (
         REFERENCES Facilities (fid) 
 );
 
-#GRANT ALTER ON hkc353_4.Schedule TO 'hkc353_4'@'172.31.163.202';
-drop table if exists Schedule;
 CREATE TABLE if not exists Schedule (
     pid INT,
     fid INT,
