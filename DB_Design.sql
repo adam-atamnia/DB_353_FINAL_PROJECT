@@ -1029,8 +1029,7 @@ CREATE TABLE if not exists EmailLog (
     FOREIGN KEY (pidreceiver)
         REFERENCES Persons (pid),
     FOREIGN KEY (fidsender)
-        REFERENCES Facilities (fid)
-    
+        REFERENCES Facilities (fid) 
 );
 
 #GRANT ALTER ON hkc353_4.Schedule TO 'hkc353_4'@'172.31.163.202';
@@ -1046,9 +1045,6 @@ CREATE TABLE if not exists Schedule (
         REFERENCES Persons (pid),
     FOREIGN KEY (fid)
         REFERENCES Facilities (fid),
-    
-    # I added this field for the purpose of differentiating the entries so I can delete them in a trigger if they are violating the constraints
-    id int auto_increment primary key
 );
 
 INSERT INTO Schedule (pid, fid, date, startTime, endTime) 
